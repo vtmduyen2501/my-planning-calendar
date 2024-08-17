@@ -1,0 +1,54 @@
+{
+  "2024-1-1": {
+    "note": "New Year's Day",
+    "color": "#ff9999"
+  },
+  "2024-1-14": {
+    "note": "Project Deadline",
+    "color": "#ffff99"
+  },
+  "2024-2-14": {
+    "note": "Valentine's Day",
+    "color": "#99ff99"
+  },
+  "2024-3-17": {
+    "note": "St. Patrick's Day",
+    "color": "#99ff99"
+  },
+  "2024-4-1": {
+    "note": "April Fool's Day",
+    "color": "#ff9999"
+  },
+  "2024-5-5": {
+    "note": "Cinco de Mayo",
+    "color": "#ffff99"
+  },
+  "2024-6-21": {
+    "note": "First Day of Summer",
+    "color": "#99ccff"
+  },
+  "2024-7-4": {
+    "note": "Independence Day",
+    "color": "#ff6666"
+  },
+  "2024-8-15": {
+    "note": "Family Reunion",
+    "color": "#66ff66"
+  },
+  "2024-9-1": {
+    "note": "Labor Day",
+    "color": "#ffcc66"
+  },
+  "2024-10-31": {
+    "note": "Halloween",
+    "color": "#ff9966"
+  },
+  "2024-11-28": {
+    "note": "Thanksgiving",
+    "color": "#ffcc99"
+  },
+  "2024-12-25": {
+    "note": "Christmas",
+    "color": "#99ffcc"
+  }
+}
