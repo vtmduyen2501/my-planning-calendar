@@ -1,20 +1,7 @@
-// Fetch calendar data from GitHub
-const fetchCalendarData = async () => {
-    const url = 'https://github.com/vtmduyen2501/my-planning-calendar/blob/main/calendar.json'; // Replace with your GitHub JSON URL
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Failed to fetch calendar data');
-        }
-        const data = await response.json();
-        renderCalendar(data); // Call renderCalendar with fetched data
-    } catch (error) {
-        console.error('Error fetching calendar data:', error);
-    }
-};
-
 document.addEventListener('DOMContentLoaded', () => {
     const calendarContainer = document.querySelector('.calendar');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
     const modal = document.getElementById('modal');
     const closeButton = document.querySelector('.close-button');
     const noteInput = document.getElementById('noteInput');
@@ -30,16 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const daysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = (month, year) => new Date(year, month, 1).getDay();
-    const year = 2024;
+    const year = 2025;
+    
+    const renderCalendar = (month) => {
 
-    const renderCalendar = (data) => {
+        
         calendarContainer.innerHTML = '';
 
         const table = document.createElement('table');
         calendarContainer.appendChild(table);
 
         const caption = document.createElement('caption');
-        caption.textContent = `${months[currentMonth]}`;
+        caption.textContent = `${months[month]}`;
         table.appendChild(caption);
 
         const headerRow = document.createElement('tr');
@@ -50,9 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
             headerRow.appendChild(th);
         });
         table.appendChild(headerRow);
+        
+  // set title, h1
+    document.title = `${year} Monthly Planner`;
+    document.querySelector("h1").textContent = `${year} Monthly Planner`;
 
-        const daysInCurrentMonth = daysInMonth(currentMonth, year);
-        let startDay = firstDayOfMonth(currentMonth, year) - 1;
+        const daysInCurrentMonth = daysInMonth(month, year);
+        let startDay = firstDayOfMonth(month, year) - 1;
         if (startDay < 0) startDay = 6;  // Adjust if the month starts on Sunday
 
         let currentDay = 1;
@@ -65,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const dayDiv = document.createElement('div');
                     dayDiv.classList.add('day');
-                    dayDiv.dataset.date = `${year}-${currentMonth + 1}-${currentDay}`;
+                    dayDiv.dataset.date = `${year}-${month + 1}-${currentDay}`;
                     
                     const dayNumber = document.createElement('div');
                     dayNumber.classList.add('day-number');
@@ -76,9 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     noteDiv.classList.add('note');
                     dayDiv.appendChild(noteDiv);
 
-                    // Retrieve data from fetched data (replace with actual data structure)
-                    const dateKey = `${year}-${currentMonth + 1}-${currentDay}`;
-                    const savedData = data[dateKey];
+                    const savedData = JSON.parse(localStorage.getItem(`${year}-${month + 1}-${currentDay}`));
                     if (savedData) {
                         if (savedData.color) {
                             dayDiv.style.backgroundColor = savedData.color;
@@ -103,6 +94,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    prevButton.addEventListener('click', () => {
+        if (currentMonth > 0) {
+            currentMonth--;
+            renderCalendar(currentMonth);
+        }
+    });
+
+    nextButton.addEventListener('click', () => {
+        if (currentMonth < 11) {
+            currentMonth++;
+            renderCalendar(currentMonth);
+        }
+    });
+
     closeButton.addEventListener('click', () => {
         modal.style.display = 'none';
     });
@@ -112,12 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const noteContent = noteInput.value.replace(/\n/g, '<br>');
             selectedDay.querySelector('.note').innerHTML = noteContent;
             
-            const dateKey = selectedDay.dataset.date;
+            const date = selectedDay.dataset.date;
             const color = selectedDay.style.backgroundColor;
             const note = noteContent;
 
-            // In a real application, you would save the data back to GitHub using API or manual push
-            console.log(`Save data for ${dateKey}: Color - ${color}, Note - ${note}`);
+            localStorage.setItem(date, JSON.stringify({ color, note }));
         }
         modal.style.display = 'none';
     });
@@ -128,15 +132,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    fetchCalendarData(); // Fetch calendar data when DOM is loaded
+    document.querySelectorAll('.color-button').forEach(button => {
+        button.addEventListener('click', (event) => {
+            if (selectedDay) {
+                selectedDay.style.backgroundColor = getLightColor(event.target.classList[1]);
+                
+                const date = selectedDay.dataset.date;
+                const color = getLightColor(event.target.classList[1]);
+                const note = selectedDay.querySelector('.note').innerHTML;
 
-    // Function to handle color selection (to be integrated as per your requirement)
-    const handleColorSelection = (color) => {
-        if (selectedDay) {
-            selectedDay.style.backgroundColor = color;
-            const dateKey = selectedDay.dataset.date;
-            // In a real application, you would save the data back to GitHub using API or manual push
-            console.log(`Selected color for ${dateKey}: ${color}`);
+                localStorage.setItem(date, JSON.stringify({ color, note }));
+            }
+        });
+    });
+
+    const getLightColor = (color) => {
+        switch (color) {
+            case 'green':
+                return 'lightgreen';
+            case 'yellow':
+                return 'lightyellow';
+            case 'red':
+                return 'lightcoral';
+            default:
+                return color;
         }
     };
+
+    renderCalendar(currentMonth);
 });
